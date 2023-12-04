@@ -284,8 +284,9 @@ namespace SGoap
 
                     subsetActions.Remove(usableAction);
                     
-                    // TODO substract current action's condition 
+                    // TODO subtract current action's condition 
                     foundPath = BuildGraph(node, leaves, subsetActions, goal);
+                    // TODO add current action's condition 
                 }
             }
 
