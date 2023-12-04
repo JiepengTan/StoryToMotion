@@ -248,6 +248,7 @@ namespace SGoap
                 node.ActionName = usableAction.Name;
                 node.Parent = parent;
                 node.Cost = parent.Cost + usableAction.Cost;
+                // TODO fixed the dynamic cost 
                 node.Cost += usableAction.DynamicallyEvaluateCost(parent.States);
 
                 foreach (var parentState in parent.States)
@@ -282,6 +283,8 @@ namespace SGoap
                         subsetActions.Add(action);
 
                     subsetActions.Remove(usableAction);
+                    
+                    // TODO substract current action's condition 
                     foundPath = BuildGraph(node, leaves, subsetActions, goal);
                 }
             }
