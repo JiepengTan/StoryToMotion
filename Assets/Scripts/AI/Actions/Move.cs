@@ -2,17 +2,28 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Move : MonoBehaviour
+namespace RealDream
 {
-    // Start is called before the first frame update
-    void Start()
+    public interface IAction
     {
-        
+        void OnStart();
+        void OnEnd();
+        void OnUpdate();
     }
 
-    // Update is called once per frame
-    void Update()
+    public class BaseAction : IAction
     {
-        
+        public virtual void OnStart()
+        {
+            
+        }
+
+        public virtual void OnEnd()
+        {
+        }
+
+        public virtual void OnUpdate()
+        {
+        }
     }
 }
