@@ -8,7 +8,7 @@ namespace RealDream.AI
     [Category("Rdx")]
     public class MoveToTarget : BasicTask
     {
-        public float keepDistance = 0.2f;
+        public float keepDistance = 0.5f;
 
         protected override string info =>
             "MoveTo Target  " + (owner?.TargetActor == null ? "" : owner.TargetActor.ToString());
