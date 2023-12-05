@@ -60,7 +60,14 @@ namespace RealDream
             m_Grounded = Physics.Raycast(ray, out hit, k_GroundedRayDistance, Physics.AllLayers,
                 QueryTriggerInteraction.Ignore);
         }
+        public void MeleeAttackStart(int throwing = 0)
+        {
+        }
 
+        // This is called by an animation event when Ellen finishes swinging her staff.
+        public void MeleeAttackEnd()
+        {
+        }
         void ForceMovement()
         {
             if(m_ExternalForceAddGravity)

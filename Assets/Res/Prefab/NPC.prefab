@@ -69,6 +69,16 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: cdd1dda890977a24b8597b566bc084de, type: 2}
+    - target: {fileID: 95065152071237234, guid: 9d620787554a948e3876fe7dbdba24e8,
+        type: 3}
+      propertyPath: m_UpdateMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 95065152071237234, guid: 9d620787554a948e3876fe7dbdba24e8,
+        type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 114011089888769184, guid: 9d620787554a948e3876fe7dbdba24e8,
         type: 3}
       propertyPath: OnDeath.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -1198,6 +1208,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 4858866283828544809}
+    - targetCorrespondingSourceObject: {fileID: 1991219941496362, guid: 9d620787554a948e3876fe7dbdba24e8,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1247529703026599622}
   m_SourcePrefab: {fileID: 100100000, guid: 9d620787554a948e3876fe7dbdba24e8, type: 3}
 --- !u!1 &6778383437837737900 stripped
 GameObject:
@@ -1215,7 +1229,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 3.5
+  m_Speed: 9
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 999
@@ -1252,5 +1266,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff07db57d58dd3f41afea6a627877594, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AnimSpeed: 3
+  AnimSpeed: 1
   target: {fileID: 0}
+  forwardSpeed: 0
+--- !u!114 &1247529703026599622
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6778383437837737900}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa2f72cb200946cc921720a53179be98, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Id: 0
+  Tags: []
+  TargetActor: {fileID: 0}
+  TargetPos: {x: 0, y: 0, z: 0}

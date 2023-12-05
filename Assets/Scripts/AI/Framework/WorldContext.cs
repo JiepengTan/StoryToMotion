@@ -13,6 +13,13 @@ namespace RealDream.AI
         private Dictionary<string, HashSet<int>> _tag2Objects = new Dictionary<string, HashSet<int>>();
         private Dictionary<int, Actor> _id2Actor = new Dictionary<int, Actor>();
 
+
+        void Awake()
+        {
+            _id = 1;
+            Instance = this;
+            
+        }
         public List<Actor> GetActors(string tag)
         {
             var result = new List<Actor>();
@@ -77,12 +84,6 @@ namespace RealDream.AI
             }
         }
 
-
-        void Awake()
-        {
-            _id = 1;
-            Instance = this;
-        }
 
         public void Update()
         {
