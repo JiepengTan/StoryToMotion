@@ -53,7 +53,7 @@ namespace SGOAP.Examples
         }
         public float GetCost(EItemTrait trait)
         {
-            AgentGoalSystem.UpdateGoalPriorities();
+            //AgentGoalSystem.UpdateGoalPriorities();
 
             var closest = GetMostWantedItem(trait);
 
