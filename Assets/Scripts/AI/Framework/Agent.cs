@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -7,68 +9,80 @@ namespace RealDream.AI
     public class AIAgent : Actor
     {
         public Actor TargetActor;
-        private SequenceAction curTask;
+        private BasicTask curTask;
         public Animator anim { get; private set; }
+        public Queue<BasicTask> Tasks = new Queue<BasicTask>();
 
         protected override void OnAwake()
         {
             anim = GetComponentInChildren<Animator>();
         }
 
+        private void Start()
+        {
+            DebugTask();
+        }
+
 
         public void Update()
         {
-            if (curTask == null)
+            while (curTask != null)
             {
-                return;
-            }
+                var dt = Time.deltaTime;
+                if (!curTask.hasInit)
+                {
+                    curTask.Start();
+                }
 
-            var dt = Time.deltaTime;
-            if (!curTask.hasInit)
-            {
-                curTask.Start();
-            }
-
-            var result = curTask.Update(dt);
-            if (result != ETaskStatus.Continue)
-            {
+                var result = curTask.Update(dt);
+                if (result == ETaskStatus.Continue)
+                {
+                    return;
+                }
                 curTask.Exit();
-                curTask = null;
+                curTask = GetNextTask();
                 Debug.Log("Task Done " + result);
-                return;
             }
-
         }
 
-        
-        public void RunTask(SequenceAction task)
+        BasicTask GetNextTask()
         {
-            if (curTask != null)
-            {
-                curTask.Exit();
-            }
-            curTask = task;
+            if (Tasks.Count == 0)
+                return null;
+            return Tasks.Dequeue();
+        }
+
+        public void AddTask(BasicTask task)
+        {
             task.Init(this);
-            Debug.Log($"{Id} RunTask \n" + task);
+            if (curTask == null)
+            {
+                curTask = task;
+                return;
+            }
+            Tasks.Enqueue(task);
         }
 
 
         [Header("Debug")] //
-        public string DebugTag = "Shop";
+        public string DebugTag = "";
 
-        public string DebugAnimTrigger = "MeleeAttack";
-        [ReadOnly][MultiLineProperty][ShowInInspector]
-        public string DebugInfo=>  curTask?.ToString()??"";
+        [ReadOnly]
+        [MultiLineProperty(Lines = 10)]
+        [ShowInInspector]
+        public string DebugInfo => $"Count:{Tasks.Count} curTask:\n" + curTask?.ToString() ?? "";
 
         [Button]
         void DebugTask()
         {
-            AddTask(DebugTag, DebugAnimTrigger);
+            AddTask("Shop", "MeleeAttack");
+            AddTask("NPC", "MeleeAttack");
+            AddTask("GasStation", "MeleeAttack");
         }
 
-        void AddTask(string tag,string endTriggerName)
+        void AddTask(string tag, string endTriggerName)
         {
-            RunTask(new SequenceAction()
+            AddTask(new SequenceAction()
                 .Add(new FindClosest() { tag = tag })
                 .Add(new MoveToTarget() { })
                 .Add(new AnimSetTrigger() { triggerName = endTriggerName })
