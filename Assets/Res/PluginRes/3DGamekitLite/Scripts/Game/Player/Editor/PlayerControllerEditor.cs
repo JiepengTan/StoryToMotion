@@ -91,7 +91,7 @@ namespace Gamekit3D
             EditorGUILayout.Space();
 
             m_MeleeWeaponProp.isExpanded = EditorGUILayout.Foldout(m_MeleeWeaponProp.isExpanded, "References");
-
+            
             if (m_MeleeWeaponProp.isExpanded)
             {
                 EditorGUI.indentLevel++;

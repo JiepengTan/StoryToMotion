@@ -336,6 +336,11 @@ namespace Gamekit3D
                 Quaternion cameraToInputOffset = Quaternion.FromToRotation(Vector3.forward, localMovementDirection);
                 targetRotation = Quaternion.LookRotation(cameraToInputOffset * forward);
             }
+            
+            if (IsControlled)
+            {
+                targetRotation = Quaternion.LookRotation(new Vector3(m_Input.MoveInput.x, 0, m_Input.MoveInput.y), Vector3.up);
+            }
 
             // The desired forward direction of Ellen.
             Vector3 resultingForward = targetRotation * Vector3.forward;
@@ -403,9 +408,11 @@ namespace Gamekit3D
             return updateOrientationForLocomotion || updateOrientationForAirborne || updateOrientationForLanding || m_InCombo && !m_InAttack;
         }
 
+        public bool IsControlled => m_Input.IsControlled;
         // Called each physics step after SetTargetRotation if there is move input and Ellen is in the correct animator state according to IsOrientationUpdated.
         void UpdateOrientation()
         {
+
             m_Animator.SetFloat(m_HashAngleDeltaRad, m_AngleDiff * Mathf.Deg2Rad);
 
             Vector3 localInput = new Vector3(m_Input.MoveInput.x, 0f, m_Input.MoveInput.y);
