@@ -38,3 +38,4 @@ sysinfo.txt
 
 /Assets/GoEngine/Plugins/*
 /GoEngine/*.exe
+/UserSettings/Layouts/*.dwlt
