@@ -5,28 +5,17 @@ using UnityEngine;
 
 namespace RealDream.AI
 {
-    public enum ETaskStatus
-    {
-        Continue,
-        Success,
-        Failed
-    }
-
-    public class ActionExecute : MonoBehaviour
-    {
-    }
-
     [Category("Rdx/Anim")]
-    public class AnimSetTrigger : BasicTask
+    public class AnimPlay : BasicTask
     {
         public string triggerName = "";
-        protected override string info => $"AnimSetTrigger {(triggerName )}";
+        protected override string info => $"AnimPlay {(triggerName )}";
 
         protected override ETaskStatus OnUpdate(float dt)
         {
             if (!string.IsNullOrEmpty(triggerName))
             {
-                owner.anim.SetTrigger(triggerName);
+                owner.anim.Play(triggerName);
             }
 
             return ETaskStatus.Success;

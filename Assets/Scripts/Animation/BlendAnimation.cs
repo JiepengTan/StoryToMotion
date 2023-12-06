@@ -27,10 +27,13 @@ namespace RealDream.Animation
     
         public override void SetPlayTime(float time)
         {
-            m_mixerPlayable.SetTime(time-0.01f);
+            if(m_firstClipLength!= 0)
+                time = time % m_firstClipLength;
+            m_mixerPlayable.SetTime(time);
             UpdateWight();
             m_mixerPlayable.Play();
             m_playableGraph.Evaluate(0.01f);
+            
         }
         public override void UpdateClip(AnimationClip clip1, AnimationClip clip2, float weight)
         {

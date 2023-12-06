@@ -40,6 +40,7 @@ namespace RealDream.AI
                 data.Transform = transData;
                 data.AssetId = agent.AssetId;
                 data.InstanceId = agent.InstanceId;
+                data.Animation = agent.anim.GetAnimInfo();
                 frameData.Agents.Add(data);
             }
 
@@ -82,6 +83,7 @@ namespace RealDream.AI
                 agent.transform.position = data.Transform.Pos;
                 agent.transform.eulerAngles = data.Transform.Rot;
                 agent.transform.localScale = data.Transform.Scale;
+                agent.GetComponentInChildren<PlayableAnimator>().ApplyAnimInfo(data.Animation);
             }
         }
 

@@ -3,20 +3,11 @@ using UnityEngine.AI;
 
 namespace RealDream
 {
-    [RequireComponent(typeof(NpcController))]
     [RequireComponent(typeof(NavMeshAgent))]
     public class NpcBehaviour : MonoBehaviour
     {
-        readonly int m_HashForwardSpeed = Animator.StringToHash("ForwardSpeed");
-        readonly int m_HashAngleDeltaRad = Animator.StringToHash("AngleDeltaRad");
-
-        readonly int m_HashGrounded = Animator.StringToHash("Grounded");
-
-        // States
-        readonly int m_HashLocomotion = Animator.StringToHash("Locomotion");
-
-
-        protected NpcController _controller;
+     
+        protected PlayableAnimator animator;
         protected NavMeshAgent _navMeshAgent;
 
 
@@ -31,12 +22,8 @@ namespace RealDream
 
         void OnEnable()
         {
-            _controller = GetComponent<NpcController>();
-            _navMeshAgent = GetComponent<NavMeshAgent>();
-
-
-            _controller.animator.Play(m_HashLocomotion, 0, Random.value);
-
+            animator = GetComponentInChildren<PlayableAnimator>();
+            _navMeshAgent = GetComponentInChildren<NavMeshAgent>();
             _lastPos = transform.position;
         }
 
@@ -50,7 +37,7 @@ namespace RealDream
                 if (_timer > 1)
                 {
                     _timer = 0;
-                    _controller.SetTarget(target.position);
+                    SetTarget(target.position);
                 }
             }
 
@@ -59,10 +46,14 @@ namespace RealDream
             vel.y = 0;
             var targetSpeed = vel.magnitude * AnimSpeed;
             forwardSpeed = Mathf.Lerp(forwardSpeed, targetSpeed, 0.1f);
-            _controller.animator.SetBool(m_HashGrounded, _controller.grounded);
-            _controller.animator.SetFloat(m_HashForwardSpeed, forwardSpeed);
-
+            animator.Move(new Vector2(0,forwardSpeed));
             _lastPos = transform.position;
         }
+        
+        public bool SetTarget(Vector3 position)
+        {
+            return _navMeshAgent.SetDestination(position);
+        }
+
     }
 }

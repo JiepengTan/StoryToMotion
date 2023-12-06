@@ -13,9 +13,10 @@ namespace RealDream.AI
         {
             if (elapsedTime >= waitTime)
             {
+                owner.anim.Play(PlayableAnimator.AnimName_Idle);
                 return ETaskStatus.Success;
             }
-
+            
             return ETaskStatus.Continue;
         }
     }
