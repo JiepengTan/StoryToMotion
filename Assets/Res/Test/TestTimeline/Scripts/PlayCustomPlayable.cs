@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using RealDream.Animation;
+using UnityEngine;
 using UnityEngine.Animations;
 using UnityEngine.Playables;
 
@@ -13,7 +14,7 @@ namespace Test
         public AnimationClip clip2;
 
         PlayableGraph m_graph;
-        AnimationBlendPlayableSimpleBehaviour m_blendPlayableBehaviour;
+        BlendAnimation m_blendPlayableBehaviour;
 
         void Start()
         {
@@ -24,9 +25,9 @@ namespace Test
 
             m_graph = PlayableGraph.Create("ChanPlayableGraph");
             var animationOutputPlayable = AnimationPlayableOutput.Create(m_graph, "AnimationOutput", Anim);
-            var blendPlayable = ScriptPlayable<AnimationBlendPlayableSimpleBehaviour>.Create(m_graph, 1);
+            var blendPlayable = ScriptPlayable<BlendAnimation>.Create(m_graph, 1);
             m_blendPlayableBehaviour = blendPlayable.GetBehaviour();
-            m_blendPlayableBehaviour.Init(clip1, clip2, 1);
+            m_blendPlayableBehaviour.UpdateClip(clip1, clip2, 1);
             animationOutputPlayable.SetSourcePlayable(blendPlayable);
             m_graph.Play();
         }
