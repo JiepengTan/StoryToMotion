@@ -8,6 +8,8 @@ namespace RealDream.AI
 {
     public class AIAgent : Actor
     {
+        public List<string> TaskCmds = new List<string>();
+        
         public Actor TargetActor;
         private BasicTask curTask;
         public Animator anim { get; private set; }
@@ -18,6 +20,18 @@ namespace RealDream.AI
             anim = GetComponentInChildren<Animator>();
         }
 
+            
+        
+        void DebugTask()
+        {
+            foreach (var line in TaskCmds)
+            {
+                var cmd = line;
+                Debug.Log("Add Task: " + cmd);
+                AddTask(cmd.Trim(),"MeleeAttack");
+            }
+        }
+        
         private void Start()
         {
             DebugTask();
@@ -72,13 +86,9 @@ namespace RealDream.AI
         [ShowInInspector]
         public string DebugInfo => $"Count:{Tasks.Count} curTask:\n" + curTask?.ToString() ?? "";
 
-        [Button]
-        void DebugTask()
-        {
-            AddTask("Shop", "MeleeAttack");
-            AddTask("NPC", "MeleeAttack");
-            AddTask("GasStation", "MeleeAttack");
-        }
+        
+        
+        
 
         void AddTask(string tag, string endTriggerName)
         {

@@ -1,5 +1,6 @@
 using System;
 using NodeCanvas.Framework;
+using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace RealDream.AI
@@ -21,6 +22,7 @@ namespace RealDream.AI
             hasInit = true;
             elapsedTime = 0;
             OnStart();
+            Debug.Log("Execute Action: " + info);
         }
         
         protected float elapsedTime;
