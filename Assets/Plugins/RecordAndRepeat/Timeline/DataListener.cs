@@ -29,6 +29,11 @@ namespace RecordAndRepeat
     [System.Serializable]
     public class DataFrameEvent : UnityEvent<IDataFrame>{}
 
+    public interface IDataReceived
+    {
+        void ProcessData(IDataFrame frame);
+    }
+
     [ExecuteInEditMode]
     public class DataListener : MonoBehaviour
     {
@@ -49,6 +54,15 @@ namespace RecordAndRepeat
             if (OnDataFrameReceived != null)
             {
                 OnDataFrameReceived(frame);
+            }
+
+            if (!Application.isPlaying)
+            {
+                var comp = GetComponent<IDataReceived>();
+                if (comp != null)
+                {
+                    comp.ProcessData(frame);
+                }
             }
 
             if (dataFrameEvent != null)

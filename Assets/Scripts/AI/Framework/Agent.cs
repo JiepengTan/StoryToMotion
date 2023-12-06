@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -9,7 +8,6 @@ namespace RealDream.AI
     public class AIAgent : Actor
     {
         public List<string> TaskCmds = new List<string>();
-        
         public Actor TargetActor;
         private BasicTask curTask;
         public Animator anim { get; private set; }
@@ -56,6 +54,10 @@ namespace RealDream.AI
                 curTask.Exit();
                 curTask = GetNextTask();
                 Debug.Log("Task Done " + result);
+                if (curTask == null)
+                {
+                    ReplayManager.Instance?.OnTaskDone(this);
+                }
             }
         }
 

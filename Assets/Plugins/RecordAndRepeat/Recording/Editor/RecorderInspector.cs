@@ -43,7 +43,6 @@ public class RecorderInspector : Editor
     void OnEnable()
     {
         RecorderBase recorder = target as RecorderBase;
-        recorder.InitRecording();
 
         // Setup the SerializedProperties.
         recordProp = serializedObject.FindProperty("doRecord");

@@ -5,7 +5,8 @@ namespace RealDream.AI
 {
     public class Actor : MonoBehaviour
     {
-        [NonSerialized] public int Id;
+        public int AssetId;
+        [NonSerialized] public int InstanceId;
 
         // TODO use int to replace string
         public string[] Tags;
@@ -22,6 +23,9 @@ namespace RealDream.AI
 
         void Awake()
         {
+            var assetRef = GetComponent<AssetRef>();
+            if (assetRef != null)
+                AssetId = assetRef.AssetId;
             WorldContext.Instance.AddActor(this);
             OnAwake();
         }

@@ -13,7 +13,7 @@ namespace RealDream.AI
         public string tag ;
 
         protected override string info =>
-            $"Find Closest {tag} result =  {(owner?.TargetActor == null ? "" : owner.TargetActor.Id.ToString())}";
+            $"Find Closest {tag} result =  {(owner?.TargetActor == null ? "" : owner.TargetActor.InstanceId.ToString())}";
 
 
         protected override ETaskStatus OnUpdate(float dt)

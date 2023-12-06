@@ -33,7 +33,7 @@ namespace RecordAndRepeat
     public abstract class RecorderBase : MonoBehaviour
     {
         //folder to store recordings
-        protected static string recordingsPath = "DataRecordings";
+        protected static string recordingsPath = "Res/RecordData";
         [HideInInspector]
         public string recordingName = "";
 
@@ -50,7 +50,7 @@ namespace RecordAndRepeat
         //private members
         private float startTimeSec;
         private float pauseStartTimeSec;
-        private bool isRecordingStarted = false;
+        private bool isRecordingStarted;
         private bool isPaused = false;
 
         [SerializeField]
@@ -69,48 +69,17 @@ namespace RecordAndRepeat
         {
             get { return String.Format("Assets/{0}", recordingsPath); }
         }
-        public string DefaultRecordingName { get; set; } = "New Recording";
-
         protected abstract RecordingBase CreateInstance();
 
-        public void InitRecording()
-        {
-            if (recordingName == "")
-            {
-                recordingName = DefaultRecordingName;
-            }
-        }
+     
 
-        protected void Start()
+        public void DoAwake()
         {
             doSave = false;
             doRecord = false;
         }
 
-        protected void Update()
-        {
-            if (!isRecordingStarted && doRecord)
-            {
-                StartRecording();
-            }
-            else if (IsRecording && !doRecord)
-            {
-                PauseRecording();
-            }
-            else if (isRecordingStarted && isPaused && doRecord)
-            {
-                ContinueRecording();
-            }
 
-            if (doSave)
-            {
-                SaveRecording();
-            }
-            else if (doCancel)
-            {
-                CancelRecording();
-            }
-        }
 
         public void StartRecording()
         {
@@ -159,12 +128,10 @@ namespace RecordAndRepeat
                 AssetDatabase.CreateFolder("Assets", recordingsPath);
             }
 
-            recordingName = recordingName.Trim() == "" ? DefaultRecordingName : recordingName;
-            string assetPathAndName = AssetDatabase.GenerateUniqueAssetPath(path + "/" + recordingName + ".asset");
-
-            AssetDatabase.CreateAsset(recording, assetPathAndName);
+            string assetPathAndName =path + "/" + recordingName + ".asset";
             responseText = String.Format("Recording stored under {0}.", assetPathAndName);
             Debug.Log(responseText);
+            AssetDatabase.CreateAsset(recording, assetPathAndName);
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
