@@ -29,42 +29,49 @@ namespace RealDream
 
         public AnimationClip StartAnim;
         private AnimationClip curAnim = null;
+        private AnimationClip lastAnim = null;
         private AnimationInfo curAnimInfo;
         private float weight;
         private float crossFadeInterval;
         private float lerpTimer;
 
+        private float _timer;
         public Replay.AnimData GetAnimInfo()
         {
             var info = new Replay.AnimData();
             return info;
         }
 
-
-        public void Move(Vector3 dir)
+     
+        public void Move(Vector2 dir)
         {
+            if (dir.magnitude > 0.01f)
+            {
+                Play("Run");
+            }
+            else
+            {
+                Play("Idle");
+            }
         }
-
-        [Range(0, 3)] [OnValueChanged(nameof(DebugOnAnimTimeChanged))]
-        public float DebugAnimTime;
 
         public string DebugAnimName;
-        public bool IsDebugSimple;
-
-        public void DebugOnAnimTimeChanged()
-        {
-            if (proxy == null) return;
-            proxy.SetPlayTime(DebugAnimTime);
-        }
 
         [Button]
-        public void DebugPlay()
+        void Play()
         {
-            m_graph.SetTimeUpdateMode(DirectorUpdateMode.Manual);
-            curAnim = FindClip(DebugAnimName);
-            proxy.UpdateClip(curAnim, curAnim, 1);
+            Play(DebugAnimName);
         }
 
+        public void Play(string anim, float crossFadeTime = 0.1f, bool isNeedStopMove = true)
+        {
+            curAnim = FindClip(anim);
+            proxy.UpdateClip(curAnim, curAnim, 0);
+            crossFadeInterval = crossFadeTime;
+            lerpTimer = 0;
+        }
+
+        public bool IsSimpleMode = false;
         void Start()
         {
             _name2Clip.Clear();
@@ -93,7 +100,8 @@ namespace RealDream
 
             m_graph = PlayableGraph.Create("PlayableGraph");
             var animationOutputPlayable = AnimationPlayableOutput.Create(m_graph, "AnimationOutput", Anim);
-            if (IsDebugSimple)
+
+            if (IsSimpleMode)
             {
                 var blendPlayable = ScriptPlayable<SimpleAnimation>.Create(m_graph, 1);
                 proxy = blendPlayable.GetBehaviour();
@@ -108,17 +116,19 @@ namespace RealDream
                 animationOutputPlayable.SetSourcePlayable(blendPlayable);
             }
 
+
+            m_graph.SetTimeUpdateMode(DirectorUpdateMode.Manual);
             m_graph.Play();
         }
-
         private void Update()
         {
-            //UpdateCrossFade();
+            DoUpdate( Time.deltaTime);
         }
 
-        private void UpdateCrossFade()
+
+        private void DoUpdate(float dt)
         {
-            lerpTimer += Time.deltaTime;
+            lerpTimer +=dt ;
             if (crossFadeInterval == 0)
             {
                 weight = 1;
@@ -126,22 +136,23 @@ namespace RealDream
             else
             {
                 weight = Mathf.Clamp01(lerpTimer / crossFadeInterval);
+                lerpTimer %= crossFadeInterval;
             }
 
-            proxy.firstClipWeight = weight;
+            _timer += dt;
+            Sample(_timer, weight);
         }
-
         void OnDestroy()
         {
             m_graph.Destroy();
         }
 
-        public void Play(string anim, float crossFadeTime = 0.2f, bool isNeedStopMove = true)
+        void Sample(float time, float weight = 1)
         {
-            curAnim = FindClip(anim);
-            proxy.UpdateClip(curAnim, curAnim, 1);
-            crossFadeInterval = crossFadeTime;
-            lerpTimer = 0;
+            this.weight = weight;
+            _timer = time;
+            proxy.weight = weight;
+            proxy.SetPlayTime(_timer);
         }
 
         AnimationClip FindClip(string name)

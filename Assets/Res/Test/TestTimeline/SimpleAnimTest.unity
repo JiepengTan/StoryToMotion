@@ -275,9 +275,11 @@ MonoBehaviour:
     Clip: {fileID: 7400000, guid: 06d66dd4f23be4f449bb0b54d43b0fcd, type: 3}
   - Name: Fishing3
     Clip: {fileID: 7400000, guid: b02d46903b1e82648b5fa11803fbb547, type: 3}
-  StartAnim: {fileID: 7400000, guid: 6e13e10b0b1558749b79047f83249efb, type: 3}
-  DebugAnimTime: 0
-  DebugAnimName: Fishing3
+  - Name: ForwardRight
+    Clip: {fileID: 7400004, guid: 46d5b47e60163f148ada32ff97c7aa32, type: 3}
+  StartAnim: {fileID: 7400000, guid: 46d5b47e60163f148ada32ff97c7aa32, type: 3}
+  DebugAnimName: 
+  IsSimpleMode: 1
 --- !u!1 &651873558
 GameObject:
   m_ObjectHideFlags: 0

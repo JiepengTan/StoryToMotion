@@ -34,7 +34,7 @@ namespace Test
 
         private void Update()
         {
-            m_blendPlayableBehaviour.firstClipWeight = weight;
+            m_blendPlayableBehaviour.weight = weight;
         }
 
         void OnDestroy()
