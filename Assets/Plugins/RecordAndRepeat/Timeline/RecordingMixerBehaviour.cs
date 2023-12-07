@@ -14,7 +14,6 @@ namespace RecordAndRepeat
 
             if (trackBinding == null)
             {
-                Debug.Log("Track without Trackbinding");
                 return;
             }
 

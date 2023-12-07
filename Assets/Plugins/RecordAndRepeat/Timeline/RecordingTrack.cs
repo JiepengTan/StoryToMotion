@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
@@ -9,6 +10,20 @@ namespace RecordAndRepeat
     [TrackBindingType(typeof(DataListener))]
     public class RecordingTrack : TrackAsset
     {
+        public TimelineClip CreateClip(RecordingBase clip)
+        {
+            if (clip == null)
+                return null;
+
+            var newClip = CreateClip<RecordingClip>();
+            RecordingClip asset = newClip.asset as RecordingClip;
+            if (asset != null)
+            {
+                asset.template.recording = clip;
+            }
+
+            return newClip;
+        }
         public override Playable CreateTrackMixer(PlayableGraph graph, GameObject go, int inputCount)
         {
             foreach (var clip in GetClips())

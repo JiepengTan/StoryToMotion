@@ -33,7 +33,7 @@ namespace RecordAndRepeat
     public abstract class RecorderBase : MonoBehaviour
     {
         //folder to store recordings
-        protected static string recordingsPath = "Res/RecordData";
+        public static string RecordingsPath = "Assets/Res/RecordData";
         [HideInInspector]
         public string recordingName = "";
 
@@ -55,7 +55,7 @@ namespace RecordAndRepeat
 
         [SerializeField]
         [HideInInspector]
-        private RecordingBase recording = null;
+        public RecordingBase recording = null;
 
         [SerializeField]
         [HideInInspector]
@@ -65,10 +65,7 @@ namespace RecordAndRepeat
         public bool IsRecording { get { return isRecordingStarted && !isPaused; } }
         public bool IsPaused { get { return isPaused; } }
         public bool IsRecordingStarted { get { return isRecordingStarted; } }
-        public string DestinationFolder
-        {
-            get { return String.Format("Assets/{0}", recordingsPath); }
-        }
+        public string DestinationFolder => RecordingsPath;
         protected abstract RecordingBase CreateInstance();
 
      
@@ -89,6 +86,8 @@ namespace RecordAndRepeat
             isRecordingStarted = true;
             isPaused = false;
         }
+
+  
 
         public void PauseRecording()
         {
@@ -119,19 +118,20 @@ namespace RecordAndRepeat
             {
                 responseText = "Nothing recorded yet, can't save Recording.";
                 ResetRecorder();
-                return;
+                return ;
             }
 
-            string path = "Assets/" + recordingsPath;
+            string path = RecordingsPath;
             if (!AssetDatabase.IsValidFolder(path))
             {
-                AssetDatabase.CreateFolder("Assets", recordingsPath);
+                AssetDatabase.CreateFolder(".",RecordingsPath);
             }
 
             string assetPathAndName =path + "/" + recordingName + ".asset";
             responseText = String.Format("Recording stored under {0}.", assetPathAndName);
             Debug.Log(responseText);
             AssetDatabase.CreateAsset(recording, assetPathAndName);
+            // create timeline 
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
