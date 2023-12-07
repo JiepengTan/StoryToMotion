@@ -40,13 +40,14 @@ namespace RecordAndRepeat
         public DataFrameEvent dataFrameEvent;
         
         public event Action<IDataFrame> OnDataFrameReceived;
-
+        IDataReceived comp ;
         void Awake()
         {
             if (dataFrameEvent == null)
             {
                 dataFrameEvent = new DataFrameEvent();
             }
+            comp = GetComponent<IDataReceived>();
         }
 
         public virtual void ProcessData(IDataFrame frame)
@@ -56,9 +57,8 @@ namespace RecordAndRepeat
                 OnDataFrameReceived(frame);
             }
 
-            if (!Application.isPlaying)
+            if (Application.isPlaying)
             {
-                var comp = GetComponent<IDataReceived>();
                 if (comp != null)
                 {
                     comp.ProcessData(frame);

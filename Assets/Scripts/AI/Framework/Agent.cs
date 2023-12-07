@@ -12,34 +12,35 @@ namespace RealDream.AI
         public PlayableAnimator anim { get; private set; }
         public Queue<BasicTask> Tasks = new Queue<BasicTask>();
 
+        [Header("Debug")] //
+        public string DebugTag = "";
+
+        //[ReadOnly]
+        //[MultiLineProperty(Lines = 10)]
+        //[ShowInInspector]
+        public string DebugInfo => $"Count:{Tasks.Count} curTask:\n" + curTask?.ToString() ?? "";
+
+
         protected override void OnAwake()
         {
             anim = GetComponentInChildren<PlayableAnimator>();
         }
-
-            
-        
-        void DebugTask()
+        protected override void OnStart()
         {
+            // Just Debug
             foreach (var line in TaskCmds)
             {
                 var strs = line.Split(';');
                 Debug.Log("Add Task: " + line);
                 AddTask(strs[0].Trim(),strs[1].Trim());
             }
-        }
-        
-        private void Start()
-        {
-            DebugTask();
+            TaskCmds.Clear();
         }
 
-
-        public void Update()
+        protected override void OnUpdate(float dt)
         {
             while (curTask != null)
             {
-                var dt = Time.deltaTime;
                 if (!curTask.hasInit)
                 {
                     curTask.Start();
@@ -60,6 +61,8 @@ namespace RealDream.AI
             }
         }
 
+        
+
         BasicTask GetNextTask()
         {
             if (Tasks.Count == 0)
@@ -77,15 +80,6 @@ namespace RealDream.AI
             }
             Tasks.Enqueue(task);
         }
-
-
-        [Header("Debug")] //
-        public string DebugTag = "";
-
-        //[ReadOnly]
-        //[MultiLineProperty(Lines = 10)]
-        //[ShowInInspector]
-        public string DebugInfo => $"Count:{Tasks.Count} curTask:\n" + curTask?.ToString() ?? "";
 
 
         void AddTask(string tag, string endTriggerName)

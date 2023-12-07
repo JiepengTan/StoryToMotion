@@ -1,4 +1,5 @@
 ﻿using System;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace RealDream.AI
@@ -6,7 +7,7 @@ namespace RealDream.AI
     public class Actor : MonoBehaviour
     {
         public int AssetId;
-        [NonSerialized] public int InstanceId;
+        [ReadOnly] public int InstanceId;
 
         // TODO use int to replace string
         public string[] Tags;
@@ -21,23 +22,75 @@ namespace RealDream.AI
             return false;
         }
 
+        private ActorComponent[] components;
+
         void Awake()
         {
             var assetRef = GetComponent<AssetRef>();
             if (assetRef != null)
                 AssetId = assetRef.AssetId;
+            components = GetComponentsInChildren<ActorComponent>();
             WorldContext.Instance.AddActor(this);
+        }
+
+        public void DoAwake()
+        {
             OnAwake();
+            foreach (var comp in components)
+            {
+                comp.DoAwake();
+            }
+        }
+
+        public void DoStart()
+        {
+            OnStart();
+            foreach (var comp in components)
+            {
+                comp.DoStart();
+            }
+        }
+
+
+        public void DoUpdate(float dt)
+        {
+            OnUpdate(dt);
+            foreach (var comp in components)
+            {
+                comp.DoUpdate(dt);
+            }
+        }
+
+        public virtual void DoDestroy()
+        {
+            foreach (var comp in components)
+            {
+                comp.DoDestroy();
+            }
+
+            _OnDestroy();
+        }
+
+        public void DestroySelf()
+        {
+            if (WorldContext.Instance != null)
+                WorldContext.Instance.RemoveActor(this);
         }
 
         protected virtual void OnAwake()
         {
         }
 
-        void OnDestroy()
+        protected virtual void OnStart()
         {
-            if (WorldContext.Instance != null)
-                WorldContext.Instance.RemoveActor(this);
+        }
+
+        protected virtual void OnUpdate(float dt)
+        {
+        }
+
+        protected virtual void _OnDestroy()
+        {
         }
     }
 }

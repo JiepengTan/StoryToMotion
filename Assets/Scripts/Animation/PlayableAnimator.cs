@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using RealDream.Animation;
@@ -8,17 +9,7 @@ using UnityEngine.Serialization;
 
 namespace RealDream
 {
-    [System.Serializable]
-    public struct AnimationInfo
-    {
-        //[HorizontalGroup, LabelWidth(40)] 
-        public string Name;
-
-        //[HorizontalGroup, LabelWidth(30)] 
-        public AnimationClip Clip;
-    }
-
-    public class PlayableAnimator : MonoBehaviour
+    public class PlayableAnimator : ActorComponent
     {
         public Animator Anim;
 
@@ -44,68 +35,37 @@ namespace RealDream
         private string curAnimName;
         private float curAnimLen;
 
-
-        public Replay.AnimData GetAnimInfo()
-        {
-            var info = new Replay.AnimData();
-            info.Anim1.Name = curAnimName;
-            info.Anim1.NormalizeTime = _timer % curAnimLen;
-            info.Anim1.Weight = 1;
-            return info;
-        }
-
-        public void ApplyAnimInfo(Replay.AnimData info)
-        {
-            return;
-            CheckStart();
-            curAnimName = info.Anim1.Name;
-            _timer = info.Anim1.NormalizeTime;
-            var weight = info.Anim1.Weight;
-            Play(curAnimName);
-            Sample(_timer, weight);
-        }
-
-        public void Move(Vector2 dir)
-        {
-            if ((AnimName_Idle != curAnimName && AnimName_Run != curAnimName)
-                && curAnimLen > _timer)
-            {
-                return;
-            }
-
-            if (dir.magnitude > 0.05f)
-            {
-                if (curAnimName == AnimName_Run)
-                    return;
-                Play(AnimName_Run);
-            }
-            else
-            {
-                if (curAnimName == AnimName_Idle)
-                    return;
-                Play(AnimName_Idle);
-            }
-        }
-
-
-        public void Play(string anim, float crossFadeTime = 0.1f, bool isNeedStopMove = true)
-        {
-            //Debug.Log(" Play " + anim);
-            curAnimName = anim;
-            curAnim = FindClip(anim);
-            curAnimLen = curAnim.length;
-            proxy.UpdateClip(curAnim, curAnim, 0);
-            crossFadeInterval = crossFadeTime;
-            lerpTimer = 0;
-            _timer = 0;
-        }
-
         public bool IsSimpleMode = false;
         private bool hasInit;
 
-        public void Start()
+
+
+        public override void DoStart()
         {
+            base.DoStart();
             CheckStart();
+        }
+        public override void DoUpdate(float dt)
+        {
+            lerpTimer += dt;
+            if (crossFadeInterval == 0)
+            {
+                weight = 1;
+            }
+            else
+            {
+                weight = Mathf.Clamp01(lerpTimer / crossFadeInterval);
+                lerpTimer %= crossFadeInterval;
+            }
+
+            _timer += dt;
+            Sample(_timer, weight);
+        }
+
+        public override void DoDestroy()
+        {
+            if (m_graph.IsValid())
+                m_graph.Destroy();
         }
 
         public void CheckStart()
@@ -163,32 +123,50 @@ namespace RealDream
             }
         }
 
-        private void Update()
+
+        public Replay.AnimData GetAnimInfo()
         {
-            DoUpdate(Time.deltaTime);
+            var info = new Replay.AnimData();
+            info.Anim1.Name = curAnimName;
+            info.Anim1.NormalizeTime = _timer % curAnimLen;
+            info.Anim1.Weight = 1;
+            return info;
         }
 
 
-        private void DoUpdate(float dt)
+        public void Move(Vector2 dir)
         {
-            lerpTimer += dt;
-            if (crossFadeInterval == 0)
+            if ((AnimName_Idle != curAnimName && AnimName_Run != curAnimName)
+                && curAnimLen > _timer)
             {
-                weight = 1;
+                return;
+            }
+
+            if (dir.magnitude > 0.05f)
+            {
+                if (curAnimName == AnimName_Run)
+                    return;
+                Play(AnimName_Run);
             }
             else
             {
-                weight = Mathf.Clamp01(lerpTimer / crossFadeInterval);
-                lerpTimer %= crossFadeInterval;
+                if (curAnimName == AnimName_Idle)
+                    return;
+                Play(AnimName_Idle);
             }
-
-            _timer += dt;
-            Sample(_timer, weight);
         }
 
-        void OnDestroy()
+
+        public void Play(string anim, float crossFadeTime = 0.1f, bool isNeedStopMove = true)
         {
-            m_graph.Destroy();
+            //Debug.Log(" Play " + anim);
+            curAnimName = anim;
+            curAnim = FindClip(anim);
+            curAnimLen = curAnim.length;
+            proxy.UpdateClip(curAnim, curAnim, 0);
+            crossFadeInterval = crossFadeTime;
+            lerpTimer = 0;
+            _timer = 0;
         }
 
         void Sample(float time, float weight = 1)

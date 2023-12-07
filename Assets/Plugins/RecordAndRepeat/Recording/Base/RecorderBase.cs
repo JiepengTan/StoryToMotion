@@ -131,6 +131,7 @@ namespace RecordAndRepeat
             responseText = String.Format("Recording stored under {0}.", assetPathAndName);
             Debug.Log(responseText);
             AssetDatabase.CreateAsset(recording, assetPathAndName);
+            
             // create timeline 
 
             AssetDatabase.SaveAssets();

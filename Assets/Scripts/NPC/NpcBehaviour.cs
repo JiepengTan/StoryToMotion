@@ -4,7 +4,7 @@ using UnityEngine.AI;
 namespace RealDream
 {
     [RequireComponent(typeof(NavMeshAgent))]
-    public class NpcBehaviour : MonoBehaviour
+    public class NpcBehaviour : ActorComponent
     {
      
         protected PlayableAnimator animator;
@@ -19,6 +19,8 @@ namespace RealDream
         public Transform target;
 
         private float _timer;
+        public float forwardSpeed;
+
 
         void OnEnable()
         {
@@ -27,10 +29,9 @@ namespace RealDream
             _lastPos = transform.position;
         }
 
-        public float forwardSpeed;
-
-        private void Update()
+        public override void DoUpdate(float dt)
         {
+            base.DoUpdate(dt);
             if (target != null)
             {
                 _timer += Time.deltaTime;

@@ -38,11 +38,10 @@ namespace RealDream
                 return item;
             }
 
-            var path = "Prefab/" + assetId;
-            var prefab = Resources.Load<GameObject>(path);
+            var prefab = ResourceManager.Instance.LoadPrefab(assetId);
             if (prefab == null)
             {
-                Debug.LogError("Can not load Prefab  " + path);
+                Debug.LogError("Can not load Prefab  " + assetId);
                 return null;
             }
 

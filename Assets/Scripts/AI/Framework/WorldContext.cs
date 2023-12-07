@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,79 @@ namespace RealDream.AI
         private Dictionary<string, HashSet<int>> _tag2Objects = new Dictionary<string, HashSet<int>>();
         private Dictionary<int, Actor> _id2Actor = new Dictionary<int, Actor>();
 
-        public Transform replayRoot;
+        [HideInInspector]  public Transform replayRoot;
+
+        public int AgentCount => _id2Actor.Values.Where(a => a is AIAgent).Count();
+
+        private ReplayManager replayManager;
+        private bool _hasStart;
+
+        private Queue<Actor> _pendingInitActors = new Queue<Actor>();
+
+        void Awake()
+        {
+            _id = 1;
+            Instance = this;
+            AssetsUtil.SetLoader(new GameAssetLoader());
+            if (replayManager == null)
+                replayManager = FindObjectOfType<ReplayManager>();
+            _hasStart = false;
+            replayManager?.DoAwake();
+        }
+
+
+        void Start()
+        {
+            if (replayManager != null && replayManager.IsReplayMode)
+            {
+                return;
+            }
+
+            var actors = _pendingInitActors.ToArray();
+            _pendingInitActors.Clear();
+            foreach (var actor in actors)
+            {
+                if (actor != null)
+                    actor.DoAwake();
+            }
+
+            foreach (var actor in actors)
+            {
+                if (actor != null)
+                    actor.DoStart();
+            }
+
+            // second batch
+            while (_pendingInitActors.Count > 0)
+            {
+                var actor = _pendingInitActors.Dequeue();
+                if (actor != null)
+                {
+                    actor.DoAwake();
+                    if (actor != null) actor.DoStart();
+                }
+            }
+
+            _hasStart = true;
+        }
+
+        private void Update()
+        {
+            if(replayManager!= null &&  replayManager.IsReplayMode) 
+                return;
+            var actors = _id2Actor.Values.ToArray();
+            float dt = Time.deltaTime;
+            foreach (var actor in actors)
+            {
+                if (actor != null)
+                {
+                    actor.DoUpdate(dt);
+                }
+            }
+
+            replayManager.DoLateUpdate();
+        }
+
 
         public FrameData Serialize()
         {
@@ -48,52 +121,6 @@ namespace RealDream.AI
             return frameData;
         }
 
-        public void Deserialize(FrameData frameData)
-        {
-            if(Application.isPlaying) return;
-            if (replayRoot != null)
-            {
-                var lst = new List<Transform>();
-                var childCount = replayRoot.childCount;
-                for (int i = 0; i < childCount; i++)
-                {
-                    lst.Add(replayRoot.GetChild(i));
-                }
-
-                foreach (var tran in lst)
-                {
-                   EditorPool.DestroyAgent(tran.gameObject);
-                }
-            }
-            if(replayRoot == null)
-                replayRoot = new GameObject("__replayRoot").transform;
-            replayRoot.SetParent(transform, true);
-
-            _id = frameData.CurId;
-
-            foreach (var data in frameData.Agents)
-            {
-                var assetId = data.AssetId;
-                var go = EditorPool.CreateAgent(assetId);
-                if(go == null)
-                    continue;
-                go.transform.SetParent(replayRoot,false);
-                var agent =go.GetComponent<AIAgent>();
-                agent.InstanceId = data.InstanceId;
-                agent.transform.position = data.Transform.Pos;
-                agent.transform.eulerAngles = data.Transform.Rot;
-                agent.transform.localScale = data.Transform.Scale;
-                agent.GetComponentInChildren<PlayableAnimator>().ApplyAnimInfo(data.Animation);
-            }
-        }
-
-
-        void Awake()
-        {
-            _id = 1;
-            Instance = this;
-            AssetsUtil.SetLoader( new GameAssetLoader());
-        }
 
         public List<Actor> GetActors(string tag)
         {
@@ -141,6 +168,16 @@ namespace RealDream.AI
 
                 _tag2Objects[tag].Add(actor.InstanceId);
             }
+
+            if (_hasStart)
+            {
+                actor.DoAwake();
+                actor.DoStart();
+            }
+            else
+            {
+                _pendingInitActors.Enqueue(actor);
+            }
         }
 
         public void RemoveActor(Actor actor)
@@ -157,6 +194,7 @@ namespace RealDream.AI
                     }
                 }
             }
+            actor.DoDestroy();
         }
 
         public void OnDestroy()
