@@ -30,6 +30,8 @@ namespace RealDream.AI
             if (assetRef != null)
                 AssetId = assetRef.AssetId;
             components = GetComponentsInChildren<ActorComponent>();
+            if (WorldContext.IsReplayMode) 
+                return;
             WorldContext.Instance.AddActor(this);
         }
 

@@ -25,6 +25,7 @@ namespace RealDream.AI
 
         private Queue<Actor> _pendingInitActors = new Queue<Actor>();
 
+        public static bool IsReplayMode;
         void Awake()
         {
             _id = 1;
@@ -33,7 +34,11 @@ namespace RealDream.AI
             if (replayManager == null)
                 replayManager = FindObjectOfType<ReplayManager>();
             _hasStart = false;
-            replayManager?.DoAwake();
+            if (replayManager != null)
+            {
+                replayManager.DoAwake();
+                IsReplayMode = replayManager.IsReplayMode;
+            }
         }
 
 
