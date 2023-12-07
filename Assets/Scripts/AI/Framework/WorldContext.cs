@@ -92,6 +92,7 @@ namespace RealDream.AI
         {
             _id = 1;
             Instance = this;
+            AssetsUtil.SetLoader( new GameAssetLoader());
         }
 
         public List<Actor> GetActors(string tag)

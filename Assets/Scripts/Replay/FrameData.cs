@@ -32,20 +32,23 @@ namespace RealDream.Replay
     [System.Serializable]
     public struct AgentData
     {
+        [System.NonSerialized] public float Time;
         public int InstanceId;
         public int AssetId;
         public TransformData Transform;
         public AnimData Animation;
     }
+
     [System.Serializable]
     public class FrameData
     {
         public int CurId;
+        public float Time;
         public List<AgentData> Agents = new List<AgentData>();
 
         public override string ToString()
         {
-            return $"CurId{CurId } count{Agents.Count}";
+            return $"CurId{CurId} count{Agents.Count}";
         }
     }
 }

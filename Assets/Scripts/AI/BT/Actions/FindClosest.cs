@@ -1,13 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
-using NodeCanvas.Framework;
-using ParadoxNotion.Design;
 using UnityEngine;
 
 
 namespace RealDream.AI
 {
-    [Category("Rdx")]
     public class FindClosest : BasicTask
     {
         public string tag ;

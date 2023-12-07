@@ -1,11 +1,9 @@
-using NodeCanvas.Framework;
-using ParadoxNotion.Design;
+
 using UnityEngine;
 using UnityEngine.AI;
 
 namespace RealDream.AI
 {
-    [Category("Rdx")]
     public class MoveToTarget : BasicTask
     {
         public float keepDistance = 0.5f;

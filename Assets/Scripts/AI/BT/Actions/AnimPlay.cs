@@ -1,11 +1,9 @@
-using NodeCanvas.Framework;
-using ParadoxNotion.Design;
+
 using UnityEditor.Rendering;
 using UnityEngine;
 
 namespace RealDream.AI
 {
-    [Category("Rdx/Anim")]
     public class AnimPlay : BasicTask
     {
         public string triggerName = "";

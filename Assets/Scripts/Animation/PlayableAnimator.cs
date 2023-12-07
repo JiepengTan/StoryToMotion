@@ -44,6 +44,7 @@ namespace RealDream
         private string curAnimName;
         private float curAnimLen;
 
+
         public Replay.AnimData GetAnimInfo()
         {
             var info = new Replay.AnimData();
@@ -74,13 +75,13 @@ namespace RealDream
 
             if (dir.magnitude > 0.05f)
             {
-                if(curAnimName == AnimName_Run)
+                if (curAnimName == AnimName_Run)
                     return;
                 Play(AnimName_Run);
             }
             else
             {
-                if(curAnimName == AnimName_Idle)
+                if (curAnimName == AnimName_Idle)
                     return;
                 Play(AnimName_Idle);
             }
@@ -109,14 +110,10 @@ namespace RealDream
 
         public void CheckStart()
         {
-            if(hasInit)
+            if (hasInit)
                 return;
             hasInit = true;
-            _name2Clip.Clear();
-            foreach (var info in Animations)
-            {
-                _name2Clip[info.Name] = info.Clip;
-            }
+            InitClips();
 
             if (Anim == null)
             {
@@ -157,6 +154,15 @@ namespace RealDream
             Play(FindName(curAnim));
         }
 
+        private void InitClips()
+        {
+            _name2Clip.Clear();
+            foreach (var info in Animations)
+            {
+                _name2Clip[info.Name] = info.Clip;
+            }
+        }
+
         private void Update()
         {
             DoUpdate(Time.deltaTime);
@@ -193,7 +199,7 @@ namespace RealDream
             proxy.SetPlayTime(_timer);
         }
 
-        string FindName(AnimationClip clip)
+        public string FindName(AnimationClip clip)
         {
             foreach (var info in Animations)
             {
@@ -204,8 +210,13 @@ namespace RealDream
             return "";
         }
 
-        AnimationClip FindClip(string name)
+        public AnimationClip FindClip(string name)
         {
+            if (_name2Clip.Count == 0)
+            {
+                InitClips();
+            }
+
             if (_name2Clip.TryGetValue(name, out var clip))
             {
                 return clip;

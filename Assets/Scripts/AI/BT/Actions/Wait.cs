@@ -1,10 +1,7 @@
-using NodeCanvas.Framework;
-using ParadoxNotion;
-using ParadoxNotion.Design;
+
 
 namespace RealDream.AI
 {
-    [Category("Rdx/Util")]
     public class Wait : BasicTask
     {
         public float waitTime;
